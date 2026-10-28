@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Türev Araç Girişi</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Başlık -->
+    <header class="header">
+      <div class="logo-area">
+        <div class="logo-icon">🚗</div>
+        <div>
+          <h1>Türev Giriş</h1>
+          <span class="subtitle">Araç Veri Aktarım Asistanı</span>
+        </div>
+      </div>
+      <div id="activeScreenBadge" class="screen-badge" title="Aktif form ekranı">Kontrol ediliyor...</div>
+    </header>
+
+    <!-- Excel Dosya Yükleme Alanı -->
+    <section class="section file-section">
+      <div class="file-box" id="dropZone">
+        <input type="file" id="fileInput" accept=".xlsx, .xls">
+        <label for="fileInput" class="file-label">
+          <span class="file-icon">📂</span>
+          <span id="fileName" class="file-name">Excel Dosyası Seç (.xlsx)</span>
+          <span id="fileInfo" class="file-info">Araclar sayfası okunur</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Araç Seçimi ve Navigasyon -->
+    <section class="section vehicle-section" id="vehicleSection">
+      <div class="section-label-row">
+        <label for="vehicleSelect" class="section-label">Araç Listesi</label>
+        <span id="vehicleCount" class="vehicle-counter">0 / 0</span>
+      </div>
+
+      <div class="select-wrapper">
+        <select id="vehicleSelect" class="vehicle-select" disabled>
+          <option value="">Önce Excel dosyası seçin</option>
+        </select>
+      </div>
+
+      <div class="nav-controls">
+        <button id="prevBtn" class="btn btn-secondary nav-btn" title="Önceki araç" disabled>
+          ◀ Geri
+        </button>
+        <button id="nextBtn" class="btn btn-secondary nav-btn" title="Sonraki araç" disabled>
+          İleri ▶
+        </button>
+      </div>
+
+      <!-- Araç Verileri Düzenleme Paneli -->
+      <div class="vehicle-editor" id="vehicleEditor">
+        <div class="editor-header" id="toggleEditor">
+          <span class="editor-title">📝 Araç Bilgileri (Düzenlenebilir)</span>
+          <span class="toggle-icon" id="editorToggleIcon">▼</span>
+        </div>
+        <div class="editor-body" id="editorBody">
+          <!-- Grup Adı (En kritik alan) -->
+          <div class="form-group highlight-group">
+            <label for="edit_Grup">Grup Adı (Türev'deki ad)</label>
+            <input type="text" id="edit_Grup" class="form-input font-mono" placeholder="Örn: NISSAN-MARCH-OTOMATIK-BENZIN">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit_Marka">Marka</label>
+              <input type="text" id="edit_Marka" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="edit_Model">Model</label>
+              <input type="text" id="edit_Model" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit_Tip">Tip (Boşsa Model)</label>
+              <input type="text" id="edit_Tip" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="edit_Plaka">Plaka</label>
+              <input type="text" id="edit_Plaka" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit_Vites">Vites</label>
+              <input type="text" id="edit_Vites" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="edit_Yakit">Yakıt Türü</label>
+              <input type="text" id="edit_Yakit" class="form-input">
+            </div>
+          </div>
+
+          <!-- Genişletilebilir Diğer Alanlar -->
+          <div class="details-toggle" id="toggleDetails">
+            <span>Diğer Teknik Alanları Göster</span>
+            <span id="detailsToggleIcon">▸</span>
+          </div>
+
+          <div class="details-body" id="detailsBody" style="display: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edit_SIPP">SIPP</label>
+                <input type="text" id="edit_SIPP" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_Provizyon">Provizyon (€)</label>
+                <input type="text" id="edit_Provizyon" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_Muafiyet">Muafiyet (€)</label>
+                <input type="text" id="edit_Muafiyet" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edit_SurucuYas">Sürücü Yaşı</label>
+                <input type="text" id="edit_SurucuYas" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_GencYas">Genç Yaş</label>
+                <input type="text" id="edit_GencYas" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_Ehliyet">Ehliyet Yıl</label>
+                <input type="text" id="edit_Ehliyet" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edit_Koltuk">Koltuk</label>
+                <input type="text" id="edit_Koltuk" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_Kapi">Kapı</label>
+                <input type="text" id="edit_Kapi" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_BuyukBagaj">B. Bagaj</label>
+                <input type="text" id="edit_BuyukBagaj" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="edit_KucukBagaj">K. Bagaj</label>
+                <input type="text" id="edit_KucukBagaj" class="form-input">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Adımlar (Kartlar) -->
+    <section class="section steps-section" id="stepsSection">
+      <!-- 1. Adım: Araç Grubu Tanımı -->
+      <div class="step-card" id="card-grup" data-step="grup">
+        <div class="step-header">
+          <a href="#" class="step-link" id="link-grup" title="Bu formu aktif sekmede aç">
+            <span class="step-number">1</span>
+            <span class="step-title">Araç Grubu Tanımı</span>
+            <span class="external-icon">↗</span>
+          </a>
+          <span class="badge" id="badge-grup">Bekliyor</span>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn-primary fill-btn" data-step="grup" disabled>Doldur</button>
+          <button class="btn btn-success save-btn" data-step="grup" disabled>Kaydet</button>
+        </div>
+      </div>
+
+      <!-- 2. Adım: Tip Tanımı -->
+      <div class="step-card" id="card-tip" data-step="tip">
+        <div class="step-header">
+          <a href="#" class="step-link" id="link-tip" title="Bu formu aktif sekmede aç">
+            <span class="step-number">2</span>
+            <span class="step-title">Tip Tanımı</span>
+            <span class="external-icon">↗</span>
+          </a>
+          <span class="badge" id="badge-tip">Bekliyor</span>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn-primary fill-btn" data-step="tip" disabled>Doldur</button>
+          <button class="btn btn-success save-btn" data-step="tip" disabled>Kaydet</button>
+        </div>
+      </div>
+
+      <!-- 3. Adım: Yeni Araç -->
+      <div class="step-card" id="card-arac" data-step="arac">
+        <div class="step-header">
+          <a href="#" class="step-link" id="link-arac" title="Bu formu aktif sekmede aç">
+            <span class="step-number">3</span>
+            <span class="step-title">Yeni Araç</span>
+            <span class="external-icon">↗</span>
+          </a>
+          <span class="badge" id="badge-arac">Bekliyor</span>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn-primary fill-btn" data-step="arac" disabled>Doldur</button>
+          <button class="btn btn-success save-btn" data-step="arac" disabled>Kaydet</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Durum / Hata / Bilgilendirme Mesaj Alanı -->
+    <footer class="status-footer">
+      <div id="statusBox" class="status-box status-idle">
+        <div class="status-icon" id="statusIcon">ℹ️</div>
+        <div class="status-text" id="statusText">Excel dosyanızı seçerek başlayın.</div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="content/common.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
